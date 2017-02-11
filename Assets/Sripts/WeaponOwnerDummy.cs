@@ -12,6 +12,13 @@ public class WeaponOwnerDummy : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		
-	}
+		if(Input.GetMouseButton(0))
+        {
+            myWeapon.TickShoot();
+        }
+        if (Input.GetMouseButtonUp(0))
+        {
+            myWeapon.ShootEnd();
+        }
+    }
 }
