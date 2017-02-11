@@ -1,10 +1,10 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+public enum WeaponType {Single,Circle,Form }
 public class Weapon : MonoBehaviour {
     protected Transform ShootOrigin;
-
+    public WeaponType type;
     public BaseWeaponObject spawnObj;
     [Header("Cooldown")]
     public float shootCooldown;
@@ -12,10 +12,18 @@ public class Weapon : MonoBehaviour {
     public float repeatCooldown;
     float curRepeatCooldown;
     float curShootDuration;
+
+    //circle
+    [Header("Circle")]
+    public int circlePatternCount;
+    public float maxAngle;
+
 	// Use this for initialization
 	void Start () {
         BulletEngine.instance.AddWeapon(this);
-	}
+        SetupOrigin();
+
+    }
 	
 	// Update is called once per frame
 	void Update () {
@@ -35,8 +43,8 @@ public class Weapon : MonoBehaviour {
     }
     void TickCooldowns()
     {
-        curRepeatCooldown -= Time.deltaTime;
-        curShootCooldown -= Time.deltaTime;
+        curRepeatCooldown -= Time.smoothDeltaTime;
+        curShootCooldown -= Time.smoothDeltaTime;
 
     }
     public void ShootStart()
@@ -48,7 +56,7 @@ public class Weapon : MonoBehaviour {
     public void TickShoot()
     {
         if (curShootDuration == 0) ShootStart();
-        curShootDuration += Time.deltaTime;
+        curShootDuration += Time.smoothDeltaTime;
 
 
         if(curShootCooldown<=0)
@@ -64,8 +72,45 @@ public class Weapon : MonoBehaviour {
     void Shoot()
     {
         curShootCooldown = shootCooldown;
+        switch (type)
+        {
+            case WeaponType.Single:
+                SingleShoot();
+                break;
+            case WeaponType.Circle:
+                CircleShoot();
+                break;
+            case WeaponType.Form:
+                FormShoot();
+                break;
+            default:
+                break;
+        }
+    }
+
+    public void SingleShoot()
+    {
         BaseWeaponObject temp = Spawn();
+        temp.transform.position = ShootOrigin.position;
         temp.transform.up = transform.up;
+    }
+    public void CircleShoot()
+    {
+        float rot = maxAngle / (circlePatternCount);
+        float offset = maxAngle / 2;
+        //Debug.Log (rot);
+
+        for (int i = 0; i < circlePatternCount; i++)
+        {
+            BaseWeaponObject temp = Spawn();
+            temp.transform.position = ShootOrigin.position;
+            temp.transform.up = transform.up;
+            temp.transform.rotation = Quaternion.Euler(0, 0, temp.transform.eulerAngles.z + rot * i - offset);
+        }
+    }
+    public void FormShoot()
+    {
+
     }
     public BaseWeaponObject Spawn()
     {
@@ -78,7 +123,11 @@ public class Weapon : MonoBehaviour {
     }
     void OnValidate()
     {
-        if(ShootOrigin==null)
+        SetupOrigin();
+    }
+    void SetupOrigin()
+    {
+        if (ShootOrigin == null)
         {
             GameObject go = new GameObject();
             go.name = "ShootOrigin";

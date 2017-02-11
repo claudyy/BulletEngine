@@ -6,10 +6,13 @@ public class Beam : BaseWeaponObject
 {
     public float beamLength=10;
     float curBeamLength;
+    LineRenderer lineRen;
     public override void Init()
     {
         base.Init();
-
+        lineRen = GetComponent<LineRenderer>();
+        lineRen.SetPosition(0, transform.position);
+        lineRen.SetPosition(1, transform.position);
     }
     public override void Tick()
     {
@@ -24,6 +27,9 @@ public class Beam : BaseWeaponObject
         {
             curBeamLength = beamLength;
         }
+        lineRen.SetPosition(0, transform.position);
+        lineRen.SetPosition(1, transform.position+transform.up*curBeamLength);
+
     }
 
 }
