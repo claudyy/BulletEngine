@@ -5,7 +5,8 @@ using UnityEngine;
 public class BaseWeaponObject : MonoBehaviour {
 
     public float lifeTime;
-    protected float curLifeTime;
+    [HideInInspector]
+    public float curLifeTime;
     void Start()
     {
         BulletEngine.instance.AddWeaponObj(this);
@@ -17,7 +18,7 @@ public class BaseWeaponObject : MonoBehaviour {
     }
     public virtual void Tick()
     {
-        curLifeTime -= Time.deltaTime;
+        curLifeTime -= Time.smoothDeltaTime;
         if(curLifeTime<=0)
         {
             DestroyWeaponObj();

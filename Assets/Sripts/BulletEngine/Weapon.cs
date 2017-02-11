@@ -6,7 +6,6 @@ public class Weapon : MonoBehaviour {
     protected Transform ShootOrigin;
     public WeaponType type;
     public BaseWeaponObject spawnObj;
-    [Header("Cooldown")]
     public float shootCooldown;
     float curShootCooldown;
     public float repeatCooldown;
@@ -14,10 +13,12 @@ public class Weapon : MonoBehaviour {
     float curShootDuration;
 
     //circle
-    [Header("Circle")]
     public int circlePatternCount;
     public float maxAngle;
-
+    //From
+    public int formPositionCount;
+    public List<Vector2> formPositionList;
+    public bool formCircleDir;
 	// Use this for initialization
 	void Start () {
         BulletEngine.instance.AddWeapon(this);
@@ -110,7 +111,16 @@ public class Weapon : MonoBehaviour {
     }
     public void FormShoot()
     {
+        for (int i = 0; i < formPositionList.Count; i++)
+        {
+            BaseWeaponObject temp = Spawn();
+            temp.transform.position = ShootOrigin.position;
+            temp.transform.position = transform.TransformPoint(formPositionList[i]);
+            if (formCircleDir) { temp.transform.up = (temp.transform.position- transform.position ).normalized; }
+            else { temp.transform.up = transform.up; }
+                
 
+        }
     }
     public BaseWeaponObject Spawn()
     {
@@ -129,12 +139,20 @@ public class Weapon : MonoBehaviour {
     {
         if (ShootOrigin == null)
         {
-            GameObject go = new GameObject();
-            go.name = "ShootOrigin";
-            ShootOrigin = go.transform;
-            ShootOrigin.parent = transform;
-            ShootOrigin.position = transform.position;
-            ShootOrigin.rotation = transform.rotation;
+            if(transform.FindChild("ShootOrigin"))
+            {
+                ShootOrigin = transform.FindChild("ShootOrigin");
+            }
+            else
+            {
+                GameObject go = new GameObject();
+                go.name = "ShootOrigin";
+                ShootOrigin = go.transform;
+                ShootOrigin.parent = transform;
+                ShootOrigin.position = transform.position;
+                ShootOrigin.rotation = transform.rotation;
+            }
+            
         }
     }
 }
