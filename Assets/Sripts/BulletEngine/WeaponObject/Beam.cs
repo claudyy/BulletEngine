@@ -18,7 +18,7 @@ public class Beam : BaseWeaponObject
     {
         transform.localScale = new Vector3(transform.localScale.x, curBeamLength, transform.localScale.z);
         base.Tick();
-        RaycastHit2D hit = Physics2D.Raycast(transform.position, transform.up, 10);
+        RaycastHit2D hit = Physics2D.Raycast(transform.position, transform.up, beamLength);
         if(hit)
         {
             curBeamLength = hit.distance;

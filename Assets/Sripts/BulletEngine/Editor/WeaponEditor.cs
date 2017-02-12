@@ -20,12 +20,16 @@ public class WeaponEditor : Editor {
         EditorGUILayout.PropertyField(m_object.FindProperty("shootCooldown"));
         EditorGUILayout.PropertyField(m_object.FindProperty("repeatCooldown"));
         EditorGUILayout.PropertyField(m_object.FindProperty("type"));
+        EditorGUILayout.PropertyField(m_object.FindProperty("randomAnglePreObj"));
+        EditorGUILayout.PropertyField(m_object.FindProperty("randomAngleGroup"));
         if (weapon.type==WeaponType.Circle)
         {
             EditorGUILayout.LabelField("Circle");
             EditorGUI.indentLevel = 2;
+            EditorGUILayout.PropertyField(m_object.FindProperty("circleRight"));
             EditorGUILayout.PropertyField(m_object.FindProperty("circlePatternCount"));
             EditorGUILayout.Slider(m_object.FindProperty("maxAngle"),0,360);
+            EditorGUILayout.PropertyField(m_object.FindProperty("patternPerShoot"));
             EditorGUI.indentLevel = 0;
         }
         if (weapon.type == WeaponType.Form)
@@ -52,6 +56,17 @@ public class WeaponEditor : Editor {
                 {
                     editFormPos = false;
                 }
+                if (GUILayout.Button("Snap Positions"))
+                {
+                    
+                    for (int i = 0; i < weapon.formPositionList.Count; i++)
+                    {
+                        Vector2 pos = weapon.formPositionList[i];
+                        Debug.Log(pos);
+                        pos = new Vector2(Mathf.Round(pos.x * 2f) * 0.5f, Mathf.Round(pos.y * 2f) * 0.5f);
+                        weapon.formPositionList[i] = pos;
+                    }
+                }
             }
             else
             {
@@ -76,8 +91,8 @@ public class WeaponEditor : Editor {
         {
             for (int i = 0; i < weapon.formPositionList.Count; i++)
             {
-                Vector3 result = Handles.PositionHandle(weapon.transform.TransformPoint(weapon.formPositionList[i]), Quaternion.identity);
-                weapon.formPositionList[i] = weapon.transform.InverseTransformPoint(result);
+                Vector3 result = Handles.PositionHandle(weapon.ShootOrigin.TransformPoint(weapon.formPositionList[i]), Quaternion.identity);
+                weapon.formPositionList[i] = weapon.ShootOrigin.InverseTransformPoint(result);
             }
         }
         

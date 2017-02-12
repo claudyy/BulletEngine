@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 public enum WeaponType {Single,Circle,Form }
 public class Weapon : MonoBehaviour {
-    protected Transform ShootOrigin;
+    public Transform ShootOrigin;
     public WeaponType type;
     public BaseWeaponObject spawnObj;
     public float shootCooldown;
@@ -11,10 +11,17 @@ public class Weapon : MonoBehaviour {
     public float repeatCooldown;
     float curRepeatCooldown;
     float curShootDuration;
+    public int patternPerShoot=2;
+    int currentPatternIndex;
+    //per Object
+    public Vector2 randomAnglePreObj;
+    //Group
+    public Vector2 randomAngleGroup;
 
     //circle
     public int circlePatternCount;
     public float maxAngle;
+    public bool circleRight = true;
     //From
     public int formPositionCount;
     public List<Vector2> formPositionList;
@@ -99,14 +106,22 @@ public class Weapon : MonoBehaviour {
     {
         float rot = maxAngle / (circlePatternCount);
         float offset = maxAngle / 2;
+        if (circleRight == false) { rot *= -1; offset *= -1; }
         //Debug.Log (rot);
-
-        for (int i = 0; i < circlePatternCount; i++)
+        float startOffset = Random.Range(randomAngleGroup.x, randomAngleGroup.y);
+        patternPerShoot = Mathf.Min(patternPerShoot, circlePatternCount);
+        for (int i = 0; i < patternPerShoot; i++)
         {
             BaseWeaponObject temp = Spawn();
             temp.transform.position = ShootOrigin.position;
             temp.transform.up = transform.up;
-            temp.transform.rotation = Quaternion.Euler(0, 0, temp.transform.eulerAngles.z + rot * i - offset);
+            Vector3 angle = new Vector3(0, 0, temp.transform.eulerAngles.z + rot * currentPatternIndex - offset);
+            angle += new Vector3(0,0, Random.Range(randomAnglePreObj.x, randomAnglePreObj.y));
+            angle += new Vector3(0,0, startOffset);
+            Debug.Log(angle);
+            temp.transform.rotation = Quaternion.Euler(angle);
+            currentPatternIndex++;
+            if (currentPatternIndex >= circlePatternCount) currentPatternIndex = 0;
         }
     }
     public void FormShoot()
@@ -115,7 +130,7 @@ public class Weapon : MonoBehaviour {
         {
             BaseWeaponObject temp = Spawn();
             temp.transform.position = ShootOrigin.position;
-            temp.transform.position = transform.TransformPoint(formPositionList[i]);
+            temp.transform.position = ShootOrigin.TransformPoint(formPositionList[i]);
             if (formCircleDir) { temp.transform.up = (temp.transform.position- transform.position ).normalized; }
             else { temp.transform.up = transform.up; }
                 
@@ -125,7 +140,12 @@ public class Weapon : MonoBehaviour {
     public BaseWeaponObject Spawn()
     {
         Debug.Log("SpawnObj "+ spawnObj.name);
-        return BulletEngine.instance.GetPoolWeaponObject(spawnObj);
+        BaseWeaponObject wObj = BulletEngine.instance.GetPoolWeaponObject(spawnObj);
+        if(wObj is Beam)
+        {
+            wObj.transform.parent = ShootOrigin;
+        }
+        return wObj;
     }
     void Pause(bool pause)
     {
