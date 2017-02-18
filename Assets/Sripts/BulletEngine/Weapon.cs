@@ -84,8 +84,8 @@ public class Weapon : MonoBehaviour {
     {
         
         if (curShootDuration == 0) ShootStart();
-        if (inReload) return;
-        if (currentAmo < amoPerShoot&&inReload==false) { StartReload(); return; }
+        if (inReload) return;// if in ShootStart called StartReload return
+        if (currentAmo < amoPerShoot&&inReload==false) { StartReload(); return; }//if already in shooting and amo is empty Start Reload
         curShootDuration += Time.smoothDeltaTime;
 
 
