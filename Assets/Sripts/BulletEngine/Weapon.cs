@@ -75,6 +75,7 @@ public class Weapon : MonoBehaviour {
     }
     public void ShootStart()
     {
+        if (inReload) return;
         if (currentAmo < amoPerShoot) { StartReload(); return; }
         if (curRepeatCooldown<=0) Shoot();
         curRepeatCooldown = repeatCooldown;
