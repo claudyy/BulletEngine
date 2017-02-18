@@ -32,7 +32,7 @@ public class Weapon : MonoBehaviour {
 
     //amo
     public int clipSize=12;
-    public int amoCount=100;
+    public int amoCount=20;
     public int amoPerShoot=1;
     public int currentAmo;
     public float reloadTime=1;
@@ -82,8 +82,9 @@ public class Weapon : MonoBehaviour {
     }
     public void TickShoot()
     {
-        if (inReload) return;
+        
         if (curShootDuration == 0) ShootStart();
+        if (inReload) return;
         if (currentAmo < amoPerShoot&&inReload==false) { StartReload(); return; }
         curShootDuration += Time.smoothDeltaTime;
 
@@ -182,17 +183,21 @@ public class Weapon : MonoBehaviour {
     }
     public void EndReload()
     {
+        if (currentAmo > 0) amoCount += currentAmo;
         int getAmo = (int)Mathf.Min(clipSize, amoCount);
-        currentAmo = getAmo;
-        
-        if(amoCount>=0)
+        getAmo = Mathf.Max(getAmo, 0);
+        if (amoCount>= getAmo)
         {
+            
             amoCount -= getAmo;
         }
         else
         {
             currentReloadTime = reloadTime;
+            return;
         }
+        
+        currentAmo = getAmo;
     }
     void Pause(bool pause)
     {
