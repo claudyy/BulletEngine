@@ -21,6 +21,9 @@ public class Beam : BaseWeaponObject
         RaycastHit2D hit = Physics2D.Raycast(transform.position, transform.up, beamLength);
         if(hit)
         {
+            IDamagable a = hit.transform.GetComponent(typeof(IDamagable)) as IDamagable;
+            if(alreadyDamaged.Contains(a)==false)a.GetAttributes().ApplyDamage(damage);
+            alreadyDamaged.Add(a);
             curBeamLength = hit.distance;
         }
         else

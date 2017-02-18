@@ -4,17 +4,24 @@ using UnityEngine;
 
 public class BaseWeaponObject : MonoBehaviour {
 
+    public Damage damage;
     public float lifeTime;
     [HideInInspector]
     public float curLifeTime;
+
+    protected List<IDamagable> alreadyDamaged = new List<IDamagable>();
+    protected float damageAgainDelay=0.2f;
+    protected float curDamageAgainDelay;
     void Start()
     {
-        BulletEngine.instance.AddWeaponObj(this);
-        Init();
+        
     }
+    //is called in weapon
     public virtual void Init()
     {
+        BulletEngine.instance.AddWeaponObj(this);
         curLifeTime = lifeTime;
+        gameObject.SetActive(true);
     }
     public virtual void Tick()
     {
@@ -22,6 +29,12 @@ public class BaseWeaponObject : MonoBehaviour {
         if(curLifeTime<=0)
         {
             DestroyWeaponObj();
+        }
+        curDamageAgainDelay -= Time.deltaTime;
+        if(curDamageAgainDelay<0)
+        {
+            curDamageAgainDelay = damageAgainDelay;
+            alreadyDamaged.Clear();
         }
     }
     public virtual void Pause(bool pause)
@@ -31,7 +44,12 @@ public class BaseWeaponObject : MonoBehaviour {
     public virtual void DestroyWeaponObj()
     {
         BulletEngine.instance.RemoveWeaponObj(this);
-        Destroy(gameObject);
+        HideObj();
+    }
+    public virtual void HideObj()
+    {
+        gameObject.SetActive(false);
+        transform.parent = BulletEngine.instance.transform;
     }
     public virtual void OnTriggerEnter2D()
     {

@@ -62,8 +62,50 @@ public class BulletEngine : MonoBehaviour {
     {
         weaponObjList.Remove(wObj);
     }
-    public BaseWeaponObject GetPoolWeaponObject(BaseWeaponObject wOpj)
+    
+
+    ///// Pooling
+    List<BaseWeaponObject> wObjList=new List<BaseWeaponObject>();
+    public BaseWeaponObject GetPoolWeaponObject(BaseWeaponObject wObj)
     {
-        return Instantiate(wOpj);
+        for (int i = 0; i < wObjList.Count; i++)
+        {
+
+            if (wObjList[i].gameObject.activeInHierarchy==false && wObjList[i].gameObject.name==wObj.gameObject.name)
+            {
+                return wObjList[i];
+            }
+        }
+        BaseWeaponObject wObjTemp = Instantiate(wObj);
+        wObjTemp.transform.parent = transform;
+        wObjTemp.gameObject.name = wObjTemp.gameObject.name.Remove(wObjTemp.gameObject.name.Length - 7);
+        wObjList.Add(wObjTemp);
+        return wObjTemp;
+    }
+    public void FillPoolWeaponObject(BaseWeaponObject wObj, int count)
+    {
+        for (int i = 0; i < count; i++)
+        {
+            BaseWeaponObject wObjTemp = Instantiate(wObj);
+            wObjTemp.transform.parent = transform;
+            wObjTemp.gameObject.name = wObjTemp.gameObject.name.Remove(wObjTemp.gameObject.name.Length - 7);
+            wObjTemp.HideObj();
+            wObjList.Add(wObjTemp);
+        }
+    }
+    public void RemovePoolWeaponObject(BaseWeaponObject wObj, int count)
+    {
+
+        for (int i = 0; i < wObjList.Count; i++)
+        {
+            if (wObjList[i].gameObject.activeInHierarchy == false && wObjList[i].gameObject.name == wObj.gameObject.name)
+            {
+                BaseWeaponObject temp = wObjList[i];
+                wObjList.RemoveAt(i);
+                Destroy(temp.gameObject);
+                count--;
+            }
+            if (count <= 0) return;
+        }
     }
 }

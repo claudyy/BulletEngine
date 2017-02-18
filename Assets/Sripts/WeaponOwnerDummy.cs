@@ -21,5 +21,9 @@ public class WeaponOwnerDummy : MonoBehaviour {
             myWeapon.ShootEnd();
         }
         transform.eulerAngles += new Vector3(0, 0, 45 * Time.smoothDeltaTime);
+        if(Input.GetKeyDown(KeyCode.P))
+        {
+            BulletEngine.instance.RemovePoolWeaponObject(myWeapon.spawnObj,2);
+        }
     }
 }

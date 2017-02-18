@@ -21,7 +21,8 @@ public class WeaponEditor : Editor {
         EditorGUILayout.PropertyField(m_object.FindProperty("repeatCooldown"));
         EditorGUILayout.PropertyField(m_object.FindProperty("type"));
         EditorGUILayout.PropertyField(m_object.FindProperty("randomAnglePreObj"));
-        EditorGUILayout.PropertyField(m_object.FindProperty("randomAngleGroup"));
+        EditorGUILayout.PropertyField(m_object.FindProperty("parentShootOrigin"));
+        if (!(weapon.type == WeaponType.Single)) EditorGUILayout.PropertyField(m_object.FindProperty("randomAngleGroup"));
         if (weapon.type==WeaponType.Circle)
         {
             EditorGUILayout.LabelField("Circle");
@@ -80,7 +81,11 @@ public class WeaponEditor : Editor {
             EditorGUI.indentLevel = 0;
 
         }
-        
+
+        EditorGUILayout.PropertyField(m_object.FindProperty("clipSize"));
+        EditorGUILayout.PropertyField(m_object.FindProperty("amoPerShoot"));
+        EditorGUILayout.PropertyField(m_object.FindProperty("reloadTime"));
+
         //Rect bar = GUILayoutUtility.GetRect(10, 10);
         //EditorGUI.ProgressBar(bar, .5f, "Test");
         m_object.ApplyModifiedProperties();

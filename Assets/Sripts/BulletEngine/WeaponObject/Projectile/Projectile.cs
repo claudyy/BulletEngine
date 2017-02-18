@@ -37,6 +37,8 @@ public class Projectile : BaseWeaponObject
         RaycastHit2D hit = Physics2D.Raycast(transform.position, transform.up, 1);
         if (hit)
         {
+            IDamagable a = hit.transform.GetComponent(typeof(IDamagable)) as IDamagable;
+            a.GetAttributes().ApplyDamage(damage);
             DestroyWeaponObj();
         }
     }
