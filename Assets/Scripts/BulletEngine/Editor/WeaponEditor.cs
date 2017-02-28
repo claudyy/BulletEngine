@@ -83,9 +83,9 @@ public class WeaponEditor : Editor {
         }
 
         EditorGUILayout.PropertyField(m_object.FindProperty("clipSize"));
-        EditorGUILayout.PropertyField(m_object.FindProperty("amoPerShoot"));
+        EditorGUILayout.PropertyField(m_object.FindProperty("ammoPerShoot"));
         EditorGUILayout.PropertyField(m_object.FindProperty("reloadTime"));
-
+        EditorGUILayout.PropertyField(m_object.FindProperty("ammoCount"));
         //Rect bar = GUILayoutUtility.GetRect(10, 10);
         //EditorGUI.ProgressBar(bar, .5f, "Test");
         m_object.ApplyModifiedProperties();

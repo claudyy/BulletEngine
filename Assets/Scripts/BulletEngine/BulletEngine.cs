@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BulletEngine : MonoBehaviour {
+public class BulletEngineTest : MonoBehaviour {
+    /*
     public static BulletEngine instance
     {
         get
@@ -17,7 +18,7 @@ public class BulletEngine : MonoBehaviour {
         }
     }
     private static BulletEngine _instance;
-
+    */
 
     public List<BaseWeaponObject> weaponObjList=new List<BaseWeaponObject>();
     public List<Weapon> weaponList=new List<Weapon>();

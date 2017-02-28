@@ -19,7 +19,7 @@ public class BaseWeaponObject : MonoBehaviour {
     //is called in weapon
     public virtual void Init()
     {
-        BulletEngine.instance.AddWeaponObj(this);
+        GameManager.instance.bulletEngine.AddWeaponObj(this);
         curLifeTime = lifeTime;
         gameObject.SetActive(true);
     }
@@ -43,13 +43,13 @@ public class BaseWeaponObject : MonoBehaviour {
     }
     public virtual void DestroyWeaponObj()
     {
-        BulletEngine.instance.RemoveWeaponObj(this);
+        GameManager.instance.bulletEngine.RemoveWeaponObj(this);
         HideObj();
     }
     public virtual void HideObj()
     {
         gameObject.SetActive(false);
-        transform.parent = BulletEngine.instance.transform;
+        transform.parent = GameManager.instance.transform;
     }
     public virtual void OnTriggerEnter2D()
     {

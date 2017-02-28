@@ -14,12 +14,18 @@ public class Attributes
 {
     public int health;
     public bool isDead;
+    IDamagable owner;
+    public void SetOwner(IDamagable _owner)
+    {
+        owner = _owner;
+    }
     public TookDamageInfo ApplyDamage(Damage d)
     {
         health -= d.damage;
         if(health<=0)
         {
             isDead = true;
+            owner.DoOnDie();
         }
         return new TookDamageInfo(true);
     }
@@ -33,4 +39,5 @@ public class Damage
 public interface IDamagable  {
 
    Attributes GetAttributes();
+   void DoOnDie();
 }

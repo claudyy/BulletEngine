@@ -32,16 +32,16 @@ public class Weapon : MonoBehaviour {
 
     //amo
     public int clipSize=12;
-    public int amoCount=20;
-    public int amoPerShoot=1;
-    public int currentAmo;
+    public int ammoCount=20;
+    public int ammoPerShoot=1;
+    public int currentAmmo;
     public float reloadTime=1;
     
     float currentReloadTime;
     public bool inReload {get { return currentReloadTime > 0; } }
 	// Use this for initialization
 	void Start () {
-        BulletEngine.instance.AddWeapon(this);
+        GameManager.instance.bulletEngine.AddWeapon(this);
         SetupOrigin();
         Init();
     }
@@ -56,8 +56,8 @@ public class Weapon : MonoBehaviour {
     }
     public void Init()
     {
-        BulletEngine.instance.FillPoolWeaponObject(spawnObj,10);
-        currentAmo = clipSize;
+        GameManager.instance.bulletEngine.FillPoolWeaponObject(spawnObj,10);
+        currentAmmo = Mathf.Min( clipSize,ammoCount);
     }
     public void Tick()
     {
@@ -76,7 +76,7 @@ public class Weapon : MonoBehaviour {
     public void ShootStart()
     {
         if (inReload) return;
-        if (currentAmo < amoPerShoot) { StartReload(); return; }
+        if (currentAmmo < ammoPerShoot) { StartReload(); return; }
         if (curRepeatCooldown<=0) Shoot();
         curRepeatCooldown = repeatCooldown;
         Debug.Log("Shoot Start");
@@ -86,7 +86,7 @@ public class Weapon : MonoBehaviour {
         
         if (curShootDuration == 0) ShootStart();
         if (inReload) return;// if in ShootStart called StartReload return
-        if (currentAmo < amoPerShoot&&inReload==false) { StartReload(); return; }//if already in shooting and amo is empty Start Reload
+        if (currentAmmo < ammoPerShoot&&inReload==false) { StartReload(); return; }//if already in shooting and amo is empty Start Reload
         curShootDuration += Time.smoothDeltaTime;
 
 
@@ -105,7 +105,7 @@ public class Weapon : MonoBehaviour {
     {
         curShootCooldown = shootCooldown;
         
-        currentAmo -= amoPerShoot;
+        currentAmmo -= ammoPerShoot;
         switch (type)
         {
             case WeaponType.Single:
@@ -166,7 +166,7 @@ public class Weapon : MonoBehaviour {
     public BaseWeaponObject Spawn(Vector2 dir,Vector2 pos)
     {
         Debug.Log("SpawnObj "+ spawnObj.name);
-        BaseWeaponObject wObj = BulletEngine.instance.GetPoolWeaponObject(spawnObj);
+        BaseWeaponObject wObj = GameManager.instance.bulletEngine.GetPoolWeaponObject(spawnObj);
         if(parentShootOrigin)
         {
             wObj.transform.parent = ShootOrigin;
@@ -184,13 +184,13 @@ public class Weapon : MonoBehaviour {
     }
     public void EndReload()
     {
-        if (currentAmo > 0) amoCount += currentAmo;
-        int getAmo = (int)Mathf.Min(clipSize, amoCount);
+        if (currentAmmo > 0) ammoCount += currentAmmo;
+        int getAmo = (int)Mathf.Min(clipSize, ammoCount);
         getAmo = Mathf.Max(getAmo, 0);
-        if (amoCount>= getAmo)
+        if (ammoCount>= getAmo)
         {
             
-            amoCount -= getAmo;
+            ammoCount -= getAmo;
         }
         else
         {
@@ -198,7 +198,7 @@ public class Weapon : MonoBehaviour {
             return;
         }
         
-        currentAmo = getAmo;
+        currentAmmo = getAmo;
     }
     void Pause(bool pause)
     {
@@ -212,7 +212,7 @@ public class Weapon : MonoBehaviour {
     {
         string s = "";
         s += type.ToString();
-        s += " Amo: " + currentAmo + " / " + clipSize+" ("+amoCount+")";
+        s += " Amo: " + currentAmmo + " / " + clipSize+" ("+ammoCount+")";
         Handles.Label(transform.position, new GUIContent(s, ""));
     }
     void SetupOrigin()

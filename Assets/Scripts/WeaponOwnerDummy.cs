@@ -5,6 +5,7 @@ using UnityEngine;
 public class WeaponOwnerDummy : MonoBehaviour {
     public Weapon myWeapon;
     public Gradient color;
+    public float rotationSpeed;
 	// Use this for initialization
 	void Start () {
 		
@@ -20,10 +21,10 @@ public class WeaponOwnerDummy : MonoBehaviour {
         {
             myWeapon.ShootEnd();
         }
-        transform.eulerAngles += new Vector3(0, 0, 45 * Time.smoothDeltaTime);
+        transform.eulerAngles += new Vector3(0, 0, rotationSpeed * Time.smoothDeltaTime);
         if(Input.GetKeyDown(KeyCode.P))
         {
-            BulletEngine.instance.RemovePoolWeaponObject(myWeapon.spawnObj,2);
+            GameManager.instance.bulletEngine.RemovePoolWeaponObject(myWeapon.spawnObj,2);
         }
     }
 }
